@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+
+.vscode/
+
+data/raw/*.csv
+data/silver/*.csv
+
+*.pbix.autorecovery
+
+.env
