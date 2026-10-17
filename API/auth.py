@@ -1,6 +1,7 @@
 import bcrypt
 from jose import jwt
 from datetime import datetime, timedelta
+from jose import JWTError, jwt
 
 def hash_password(password: str):
 
@@ -51,3 +52,23 @@ def create_access_token(data: dict):
         SECRET_KEY,
         algorithm=ALGORITHM
     )
+
+
+SECRET_KEY = "steam_analytics_secret_key_2026"
+ALGORITHM = "HS256"
+
+
+def verify_token(token: str):
+
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        return payload
+
+    except JWTError:
+
+        return None

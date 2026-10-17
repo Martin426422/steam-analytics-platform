@@ -5,6 +5,11 @@ from API.database import SessionLocal
 from API.models import User
 from API.auth import hash_password
 
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from API.auth import verify_token
+
 app = FastAPI()
 
 
@@ -13,12 +18,36 @@ class UserRegister(BaseModel):
     email: str
     password: str
 
+security = HTTPBearer()
 
-@app.get("/")
-def root():
-    return {
-        "message": "Steam Analytics API is running"
-    }
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+
+    token = credentials.credentials
+
+    payload = verify_token(token)
+
+    if payload is None:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+    return payload
+
+@app.get("/views")
+def get_views(
+    user=Depends(get_current_user)
+):
+
+    return [
+        "vw_gold_latest_game_performance",
+        "vw_gold_publisher_stats",
+        "vw_gold_game_performance"
+    ]
 
 
 @app.post("/register")
