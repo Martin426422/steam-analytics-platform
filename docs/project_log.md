@@ -288,3 +288,10 @@ Benefits:
 - ETL logging
 - Alerting
 - Pipeline health monitoring
+
+### Authentication API
+
+- user registration
+- bcrypt password hashing
+- JWT authentication
+- protected API endpoints

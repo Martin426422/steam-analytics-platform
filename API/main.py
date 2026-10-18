@@ -10,6 +10,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from API.auth import verify_token
 
+from sqlalchemy import text
+
 app = FastAPI()
 
 
@@ -43,11 +45,21 @@ def get_views(
     user=Depends(get_current_user)
 ):
 
-    return [
-        "vw_gold_latest_game_performance",
-        "vw_gold_publisher_stats",
-        "vw_gold_game_performance"
+    db = SessionLocal()
+
+    result = db.execute(
+        text("""
+            SELECT TABLE_NAME
+            FROM INFORMATION_SCHEMA.VIEWS
+        """)
+    )
+
+    views = [
+        row.TABLE_NAME
+        for row in result
     ]
+
+    return views
 
 
 @app.post("/register")
@@ -122,3 +134,5 @@ def login(user: UserLogin):
         "access_token": token,
         "token_type": "bearer"
     }
+
+##uvicorn API.main:app --reload
